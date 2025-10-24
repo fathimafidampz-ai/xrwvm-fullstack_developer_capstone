@@ -7,22 +7,44 @@
 <script>
 
 const logout = async (e) => {
-//Include the code for logout here.
+  e?.preventDefault(); // prevents reload if called from a click
+  let logout_url = window.location.origin + "/djangoapp/logout";
+
+  try {
+    // Send logout request (don’t expect JSON)
+    const res = await fetch(logout_url, { method: "GET" });
+
+    if (res.ok) {
+      // Remove user from session storage
+      let username = sessionStorage.getItem("username");
+      sessionStorage.removeItem("username");
+
+      alert("Logging out " + username + "...");
+      // Redirect to homepage after logout
+      window.location.href = window.location.origin;
+    } else {
+      alert("Logout failed. Server returned an error.");
+    }
+  } catch (err) {
+    console.error("Logout error:", err);
+    alert("Something went wrong during logout.");
+  }
 };
 
-let checkSession = ()=>{
+let checkSession = () => {
   let curr_user = sessionStorage.getItem("username");
 
   if (curr_user && curr_user !== "") {
-    document.getElementById("loginlogout").innerHTML = 
-    '<span class="homepage_links">' + curr_user +'</span>' +
-    '<a class="homepage_links" onclick="logout()" href="/">Logout</a>'
+    document.getElementById("loginlogout").innerHTML =
+      '<span class="homepage_links">' + curr_user + '</span>' +
+      '<a class="homepage_links" href="#" onclick="logout(event)">Logout</a>';
   } else {
-    document.getElementById("loginlogout").innerHTML = 
-    '<a class="homepage_links" href="/login">Login</a>'+
-    '<a class="homepage_links"  href="/register">Register</a>'
+    document.getElementById("loginlogout").innerHTML =
+      '<a class="homepage_links" href="/login">Login</a>' +
+      '<a class="homepage_links" href="/register">Register</a>';
   }
- }
+};
+
 </script>
 </head>
 <body onload="checkSession()">
@@ -46,6 +68,7 @@ let checkSession = ()=>{
       </ul>
       <span class="navbar-text">
         <div class="loginlink" id="loginlogout">
+
         </div>
         </span>
     </div>
