@@ -65,8 +65,35 @@ def get_cars(request):
     return JsonResponse({"CarModels":cars})   
 
 # Create a `registration` view to handle sign up request
+def registration(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+        email = request.POST.get('email')
 
-# ...
+        if not username or not password or not password_confirm or not email:
+            messages.error(request, "Please fill out all fields.")
+            return render(request, 'registration.html')
+
+        if password != password_confirm:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'registration.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, 'registration.html')
+
+        # Create the user
+        user = User.objects.create_user(username=username, password=password, email=email)
+        user.save()
+
+        # Automatically log in the user after registration
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('djangoapp:index')  # Redirect to home or dealers page
+    return render(request, 'registration.html')
 
 # # Update the `get_dealerships` view to render the index page with
 # a list of dealerships
