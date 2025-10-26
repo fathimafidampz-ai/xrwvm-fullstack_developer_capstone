@@ -66,7 +66,6 @@ def get_cars(request):
 
 # Create a `registration` view to handle sign up request
 def registration(request):
-<<<<<<< HEAD
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -76,51 +75,28 @@ def registration(request):
             last_name = data.get("lastName")
             email = data.get("email")
 
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({"userName": username, "error": "Already Registered"})
+            if not username or not password or not email:
+                return JsonResponse({"error": "Please fill out all fields."})
 
-            user = User.objects.create_user(username=username, password=password, email=email,
-                                            first_name=first_name, last_name=last_name)
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({"error": "Username already exists."})
+
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                email=email
+            )
             user.save()
 
-            login(request, user)  # Log the user in after registration
-
+            login(request, user)
             return JsonResponse({"userName": username})
 
         except Exception as e:
             return JsonResponse({"error": str(e)})
 
     return JsonResponse({"error": "Invalid HTTP method"}, status=400)
-=======
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        password_confirm = request.POST.get('password_confirm')
-        email = request.POST.get('email')
->>>>>>> 1a9751cda1f8fd3b2b807c7bae9451e9b2fa315a
-
-        if not username or not password or not password_confirm or not email:
-            messages.error(request, "Please fill out all fields.")
-            return render(request, 'registration.html')
-
-        if password != password_confirm:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'registration.html')
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists.")
-            return render(request, 'registration.html')
-
-        # Create the user
-        user = User.objects.create_user(username=username, password=password, email=email)
-        user.save()
-
-        # Automatically log in the user after registration
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('djangoapp:index')  # Redirect to home or dealers page
-    return render(request, 'registration.html')
 
 # # Update the `get_dealerships` view to render the index page with
 # a list of dealerships
@@ -161,6 +137,8 @@ def get_dealer_details(request, dealer_id):
     else:
         return JsonResponse({"status":400,"message":"Bad Request"})
 # ...
+# ...
+
 
 # Create a `add_review` view to submit a review
 # def add_review(request):
@@ -174,22 +152,6 @@ def add_review(request):
             return JsonResponse({"status":401,"message":"Error in posting review"})
     else:
         return JsonResponse({"status":403,"message":"Unauthorized"})
-<<<<<<< HEAD
 
 
 
-def get_dealer_reviews(request, dealer_id):
-    # if dealer id has been provided
-    if(dealer_id):
-        endpoint = "/fetchReviews/dealer/"+str(dealer_id)
-        reviews = get_request(endpoint)
-        for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
-        return JsonResponse({"status":200,"reviews":reviews})
-    else:
-        return JsonResponse({"status":400,"message":"Bad Request"})
-=======
->>>>>>> 1a9751cda1f8fd3b2b807c7bae9451e9b2fa315a
-# ...
