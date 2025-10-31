@@ -30,7 +30,7 @@ const Dealer = () => {
     console.log("Dealer data response:", retobj);
 
     if (res.ok) {
-        setDealer(retobj); // ✅ Directly set the returned object
+        setDealer(retobj.dealer); // ✅ Directly set the returned object
     }
  }
 
@@ -69,7 +69,7 @@ return(
   <div style={{margin:"20px"}}>
       <Header/>
       <div style={{marginTop:"10px"}}>
-      <h1 style={{color:"grey"}}>{dealer.full_name}{postReview}</h1>
+      <h1 style={{color:"grey"}}>{dealer.name}{postReview}</h1>
       <h4  style={{color:"grey"}}>{dealer['city']},{dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4>
       </div>
       <div class="reviews_panel">
