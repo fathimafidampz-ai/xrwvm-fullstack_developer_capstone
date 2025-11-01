@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.http import JsonResponse
@@ -18,8 +17,12 @@ def login_user(request):
     user = authenticate(username=username, password=password)
     if user is not None:
         login(request, user)
-        return JsonResponse({"userName": username, "status": "Authenticated"})
-    return JsonResponse({"userName": username, "status": "Failed"})
+        return JsonResponse(
+            {"userName": username, "status": "Authenticated"}
+        )
+    return JsonResponse(
+        {"userName": username, "status": "Failed"}
+    )
 
 
 def logout_request(request):
@@ -31,7 +34,13 @@ def get_cars(request):
     if not CarMake.objects.exists():
         initiate()
     car_models = CarModel.objects.select_related('car_make')
-    cars = [{"CarModel": cm.name, "CarMake": cm.car_make.name} for cm in car_models]
+    cars = [
+        {
+            "CarModel": cm.name,
+            "CarMake": cm.car_make.name
+        }
+        for cm in car_models
+    ]
     return JsonResponse({"CarModels": cars})
 
 
@@ -75,9 +84,14 @@ def get_dealer_reviews(request, dealer_id):
         endpoint = f"/fetchReviews/dealer/{dealer_id}"
         reviews = get_request(endpoint)
         for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            if response is not None and 'sentiment' in response:
-                review_detail['sentiment'] = response['sentiment']
+            sentiment_resp = analyze_review_sentiments(
+                review_detail['review']
+            )
+            if (
+                sentiment_resp is not None
+                and 'sentiment' in sentiment_resp
+            ):
+                review_detail['sentiment'] = sentiment_resp['sentiment']
             else:
                 review_detail['sentiment'] = None
         return JsonResponse({"status": 200, "reviews": reviews})
@@ -96,8 +110,12 @@ def add_review(request):
     if not request.user.is_anonymous:
         data = json.loads(request.body)
         try:
-            response = post_review(data)
+            post_review(data)
             return JsonResponse({"status": 200})
         except Exception:
-            return JsonResponse({"status": 401, "message": "Error in posting review"})
-    return JsonResponse({"status": 403, "message": "Unauthorized"})
+            return JsonResponse(
+                {"status": 401, "message": "Error in posting review"}
+            )
+    return JsonResponse(
+        {"status": 403, "message": "Unauthorized"}
+    )
