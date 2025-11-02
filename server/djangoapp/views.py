@@ -77,10 +77,12 @@ def get_dealerships(request, state="All"):
         else:
             endpoint = f"/fetchDealers/{state}"
         dealerships = get_request(endpoint)
+        print("Dealerships fetched:", dealerships)  # Debug line
         return JsonResponse({"status": 200, "dealers": dealerships or []})
     except Exception as e:
-        # Optionally: log error, print(e)
+        print("Error in get_dealerships:", e)  # Debug line
         return JsonResponse({"status": 500, "error": str(e)}, status=500)
+
 
 
 
