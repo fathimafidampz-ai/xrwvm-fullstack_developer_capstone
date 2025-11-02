@@ -71,12 +71,18 @@ def registration(request):
 
 
 def get_dealerships(request, state="All"):
-    if state == "All":
-        endpoint = "/fetchDealers"
-    else:
-        endpoint = f"/fetchDealers/{state}"
-    dealerships = get_request(endpoint)
-    return JsonResponse({"status": 200, "dealers": dealerships})
+    try:
+        if state == "All":
+            endpoint = "/fetchDealers"
+        else:
+            endpoint = f"/fetchDealers/{state}"
+        dealerships = get_request(endpoint)
+        return JsonResponse({"status": 200, "dealers": dealerships or []})
+    except Exception as e:
+        # Optionally: log error, print(e)
+        return JsonResponse({"status": 500, "error": str(e)}, status=500)
+
+
 
 
 def get_dealer_reviews(request, dealer_id):

@@ -25,8 +25,11 @@ def get_request(endpoint, **kwargs):
     try:
         response = requests.get(request_url)
         return response.json()
-    except Exception:
-        print("Network exception occurred")
+    except Exception as err:
+        print("Network exception occurred:", err)
+        # Return an empty list/object so views don’t fail
+        return []   # <-- If always list, otherwise {} if response is dict
+
 
 
 def analyze_review_sentiments(text):
