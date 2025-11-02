@@ -84,9 +84,6 @@ def get_dealerships(request, state="All"):
         return JsonResponse({"status": 500, "error": str(e)}, status=500)
 
 
-
-
-
 def get_dealer_reviews(request, dealer_id):
     if dealer_id:
         endpoint = f"/fetchReviews/dealer/{dealer_id}"
