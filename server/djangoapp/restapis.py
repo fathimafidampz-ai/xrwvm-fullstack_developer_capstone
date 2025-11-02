@@ -31,7 +31,6 @@ def get_request(endpoint, **kwargs):
         return []   # <-- If always list, otherwise {} if response is dict
 
 
-
 def analyze_review_sentiments(text):
     request_url = (
         sentiment_analyzer_url
