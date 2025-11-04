@@ -28,6 +28,15 @@ app.get('/', function (req, res) {
   res.send("Welcome to the Mongoose API");
 });
 
+app.get('/fetchDealers', async (req, res) => {
+  try {
+    const documents = await Dealerships.find();
+    res.json(documents);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching dealerships' });
+  }
+});
+
 // Express route to fetch all reviews
 app.get('/fetchReviews', function (req, res) {
   Reviews.find().then(function (documents) {
@@ -77,3 +86,4 @@ app.post('/insert_review', express.raw({ type: '*/*' }), function (req, res) {
 app.listen(port, function () {
   console.log('Server is running on http://localhost:' + port);
 });
+
